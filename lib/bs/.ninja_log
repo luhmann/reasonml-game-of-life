@@ -1,7 +1,0 @@
-# ninja log v5
-1	16	1536855208	ReactTemplate.cmi	e0c0bac5b6301ae4
-0	42	1536855208	src/GoL.mlast	d9f15983555fe2a6
-42	47	1536855208	src/GoL.mlast.d	d8c4a78096bc2a33
-0	18	1536855208	src/GoL-ReactTemplate.cmj	30fedd8583257099
-0	18	1536855208	/Users/jfd/dev/reasonml-game-of-life/src/GoL.bs.js	30fedd8583257099
-0	18	1536855208	src/GoL-ReactTemplate.cmi	30fedd8583257099

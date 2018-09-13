@@ -1,1 +1,0 @@
-src/GoL-ReactTemplate.cmj :
