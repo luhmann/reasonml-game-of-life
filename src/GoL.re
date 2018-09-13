@@ -1,3 +1,4 @@
+[@bs.module] external logUpdate: string => unit = "log-update";
 Random.init(int_of_float(Js.Date.now()));
 
 /**
@@ -20,9 +21,9 @@ type board = ref(array(array(condition)));
 
 type coordinates = (int, int);
 
-let createCondition = () => Random.int(10) < 5 ? Alive : Dead;
+let createCondition = () => Random.int(10) < 4 ? Alive : Dead;
 
-let initialBoard = Array.make_matrix(20, 50, 0);
+let initialBoard = Array.make_matrix(30, 80, 0);
 
 let seed = board =>
   Array.map(row => Array.map(_col => createCondition(), row), board);
@@ -31,21 +32,13 @@ let board = ref(seed(initialBoard));
 
 let printCondition = (cond: condition) =>
   switch (cond) {
-  | Alive => print_string({js|◽ |js})
-  | Dead => print_string({js|◾ |js})
-  | OutOfBounds => ()
+  | Alive => {js|◽|js}
+  | Dead => {js|◾|js}
+  | OutOfBounds => ""
   };
 
-/* let printCondition = (cond: condition) =>
-   switch (cond) {
-   | Alive => print_string("1|")
-   | Dead => print_string("0|")
-   }; */
-
-let printRow = row: unit => {
-  Array.map(item => printCondition(item), row) |> ignore;
-  print_string("\n");
-};
+let printRow = row =>
+  Js.Array.joinWith(" ", Array.map(item => printCondition(item), row));
 
 let getAliveNeighbours = (coordinates: coordinates): int => {
   let (x, y) = coordinates;
@@ -61,22 +54,12 @@ let getAliveNeighbours = (coordinates: coordinates): int => {
           | condition => condition
           | exception (Invalid_argument(_err)) => OutOfBounds
           };
-        /*
-         Js.log3(
-           coordinates,
-           (targetCol, targetRow),
-           switch (value) {
-           | Alive => "1"
-           | Dead => "0"
-           | OutOfBounds => "X"
-           },
-         ); */
 
         Js.Array.push(value, items) |> ignore;
       };
     };
   };
-  /* print_endline("---"); */
+
   let sum =
     Array.fold_left(
       (acc, item) =>
@@ -88,11 +71,6 @@ let getAliveNeighbours = (coordinates: coordinates): int => {
       0,
       items,
     );
-  /* Js.log3(
-       coordinates,
-       Array.map(item => item == Alive ? "1" : "0", items),
-       sum,
-     ); */
   sum;
 };
 
@@ -115,14 +93,10 @@ let tick = (board: board) =>
     board^,
   );
 
-let printBoard = board => {
-  Js.log("\x1Bc");
-  /* Js.log("--------"); */
-  Array.map(row => printRow(row), board) |> ignore;
-};
-
-/* printBoard(board^);
-   printBoard(tick(board)); */
+let printBoard = board =>
+  logUpdate(
+    Js.Array.joinWith("\n", Array.map(row => printRow(row), board)),
+  );
 
 printBoard(board^);
 Js.Global.setInterval(
@@ -130,5 +104,5 @@ Js.Global.setInterval(
     board := tick(board);
     printBoard(board^);
   },
-  1000,
+  250,
 );
