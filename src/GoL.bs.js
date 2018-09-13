@@ -6,7 +6,7 @@ var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Random = require("bs-platform/lib/js/random.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
-var Pervasives = require("bs-platform/lib/js/pervasives.js");
+var LogUpdate = require("log-update");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 Random.init(Date.now() | 0);
@@ -23,7 +23,7 @@ function range(start, end_) {
 }
 
 function createCondition() {
-  var match = Random.$$int(10) < 5;
+  var match = Random.$$int(10) < 4;
   if (match) {
     return /* Alive */0;
   } else {
@@ -31,7 +31,7 @@ function createCondition() {
   }
 }
 
-var initialBoard = $$Array.make_matrix(20, 50, 0);
+var initialBoard = $$Array.make_matrix(30, 80, 0);
 
 function seed(board) {
   return $$Array.map((function (row) {
@@ -46,18 +46,17 @@ var board = /* record */[/* contents */seed(initialBoard)];
 function printCondition(cond) {
   switch (cond) {
     case 0 : 
-        return Pervasives.print_string("◽ ");
+        return "◽";
     case 1 : 
-        return Pervasives.print_string("◾ ");
+        return "◾";
     case 2 : 
-        return /* () */0;
+        return "";
     
   }
 }
 
 function printRow(row) {
-  $$Array.map(printCondition, row);
-  return Pervasives.print_string("\n");
+  return $$Array.map(printCondition, row).join(" ");
 }
 
 function getAliveNeighbours(coordinates) {
@@ -130,8 +129,7 @@ function tick(board) {
 }
 
 function printBoard(board) {
-  console.log("\x1bc");
-  $$Array.map(printRow, board);
+  LogUpdate($$Array.map(printRow, board).join("\n"));
   return /* () */0;
 }
 
@@ -140,7 +138,7 @@ printBoard(board[0]);
 setInterval((function () {
         board[0] = tick(board);
         return printBoard(board[0]);
-      }), 1000);
+      }), 250);
 
 exports.range = range;
 exports.createCondition = createCondition;
