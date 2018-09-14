@@ -1,24 +1,23 @@
-/* This is the BuckleScript configuration file. Note that this is a comment;
-  BuckleScript comes with a JSON parser that supports comments and trailing
-  comma. If this screws with your editor highlighting, please tell us by filing
-  an issue! */
+// This is the configuration file used by BuckleScript's build system bsb. Its documentation lives here: http://bucklescript.github.io/bucklescript/docson/#build-schema.json
+// BuckleScript comes with its own parser for bsconfig.json, which is normal JSON, with the extra support of comments and trailing commas.
 {
-  "name": "react-template",
-  "reason": {
-    "react-jsx": 2
-  },
+  "name": "reasonml-game-of-life",
+  "version": "0.1.0",
   "sources": {
     "dir": "src",
     "subdirs": true
   },
-  "package-specs": [
-    {
-      "module": "commonjs",
-      "in-source": true
-    }
-  ],
+  "package-specs": {
+    "module": "commonjs",
+    "in-source": true
+  },
   "suffix": ".bs.js",
+  "bs-dependencies": [
+    // add your dependencies here. You'd usually install them normally through `npm install my-dependency`. If my-dependency has a bsconfig.json too, then everything will work seamlessly.
+  ],
+  "warnings": {
+    "error": "+101"
+  },
   "namespace": true,
-  "bs-dependencies": [],
   "refmt": 3
 }

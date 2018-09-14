@@ -4,18 +4,17 @@
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
-    "clean": "bsb -clean-world",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "bsb -clean-world"
   },
   "keywords": [
     "BuckleScript"
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "log-update": "^2.3.0"
-  },
   "devDependencies": {
     "bs-platform": "^4.0.5"
+  },
+  "dependencies": {
+    "log-update": "^2.3.0"
   }
 }

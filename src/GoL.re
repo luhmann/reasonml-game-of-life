@@ -1,16 +1,4 @@
-[@bs.module] external logUpdate: string => unit = "log-update";
 Random.init(int_of_float(Js.Date.now()));
-
-/**
- * Compute a list of integers starting with `start`,
- * up to and excluding `end_`.
- */
-let rec range = (start: int, end_: int) =>
-  if (start >= end_) {
-    [];
-  } else {
-    [start, ...range(start + 1, end_)];
-  };
 
 type condition =
   | Alive
@@ -21,8 +9,26 @@ type board = ref(array(array(condition)));
 
 type coordinates = (int, int);
 
+module Output = {
+  [@bs.module] external logUpdate: string => unit = "log-update";
+
+  let mapCondition = cond =>
+    switch (cond) {
+    | Alive => {js|◽|js}
+    | Dead => {js|◾|js}
+    | OutOfBounds => ""
+    };
+
+  let mapRow = row: string =>
+    row->Array.map(mapCondition, _)->Js.Array.joinWith(" ", _);
+
+  let printBoard = board =>
+    board->Array.map(mapRow, _)->Js.Array.joinWith("\n", _)->logUpdate;
+};
+
 let createCondition = () => Random.int(10) < 4 ? Alive : Dead;
 
+/* use array for ease of value access */
 let initialBoard = Array.make_matrix(30, 80, 0);
 
 let seed = board =>
@@ -30,38 +36,28 @@ let seed = board =>
 
 let board = ref(seed(initialBoard));
 
-let printCondition = (cond: condition) =>
-  switch (cond) {
-  | Alive => {js|◽|js}
-  | Dead => {js|◾|js}
-  | OutOfBounds => ""
-  };
+let neighbourOffsets = [
+  ((-1), (-1)),
+  ((-1), 0),
+  ((-1), 1),
+  (0, (-1)),
+  (0, 1),
+  (1, (-1)),
+  (1, 0),
+  (1, 1),
+];
 
-let printRow = row =>
-  Js.Array.joinWith(" ", Array.map(item => printCondition(item), row));
-
-let getAliveNeighbours = (coordinates: coordinates): int => {
+let getAliveNeighbours = (board, coordinates: coordinates): int => {
   let (x, y) = coordinates;
-  let items = [||];
-  for (colOffset in (-1) to 1) {
-    for (rowOffset in (-1) to 1) {
-      let targetCol = x + colOffset;
-      let targetRow = y + rowOffset;
-
-      if ((targetCol, targetRow) != coordinates) {
-        let value =
-          switch (board^[targetRow][targetCol]) {
-          | condition => condition
-          | exception (Invalid_argument(_err)) => OutOfBounds
-          };
-
-        Js.Array.push(value, items) |> ignore;
-      };
-    };
-  };
-
-  let sum =
-    Array.fold_left(
+  List.map(
+    ((rowOffset, colOffset)) =>
+      switch (board^[y + rowOffset][x + colOffset]) {
+      | condition => condition
+      | exception (Invalid_argument(_err)) => OutOfBounds
+      },
+    neighbourOffsets,
+  )
+  ->List.fold_left(
       (acc, item) =>
         switch (item) {
         | Alive => acc + 1
@@ -69,13 +65,12 @@ let getAliveNeighbours = (coordinates: coordinates): int => {
         | OutOfBounds => acc
         },
       0,
-      items,
+      _,
     );
-  sum;
 };
 
-let isDeadOrAlive = (condition, aliveNeighbours) =>
-  switch (condition, aliveNeighbours) {
+let isDeadOrAlive = (condition, numAliveNeighbours) =>
+  switch (condition, numAliveNeighbours) {
   | (Alive, 2) => Alive
   | (Alive, 3) => Alive
   | (Dead, 3) => Alive
@@ -87,22 +82,20 @@ let tick = (board: board) =>
     (rowIndex, row) =>
       Array.mapi(
         (colIndex, cell) =>
-          isDeadOrAlive(cell, getAliveNeighbours((colIndex, rowIndex))),
+          isDeadOrAlive(
+            cell,
+            getAliveNeighbours(board, (colIndex, rowIndex)),
+          ),
         row,
       ),
     board^,
   );
 
-let printBoard = board =>
-  logUpdate(
-    Js.Array.joinWith("\n", Array.map(row => printRow(row), board)),
-  );
-
-printBoard(board^);
+Output.printBoard(board^);
 Js.Global.setInterval(
   () => {
     board := tick(board);
-    printBoard(board^);
+    Output.printBoard(board^);
   },
   250,
 );

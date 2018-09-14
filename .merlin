@@ -1,7 +1,6 @@
 ####{BSB GENERATED: NO EDIT
 B lib/bs
-FLG -open ReactTemplate
-FLG -ppx '/Users/jfd/dev/reasonml-game-of-life/node_modules/bs-platform/lib/reactjs_jsx_ppx_2.exe'
+FLG -open ReasonmlGameOfLife
 FLG -ppx /Users/jfd/dev/reasonml-game-of-life/node_modules/bs-platform/lib/bsppx.exe
 S /Users/jfd/dev/reasonml-game-of-life/node_modules/bs-platform/lib/ocaml
 B /Users/jfd/dev/reasonml-game-of-life/node_modules/bs-platform/lib/ocaml
