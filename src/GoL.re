@@ -28,7 +28,7 @@ module Output = {
 
 let createCondition = () => Random.int(10) < 4 ? Alive : Dead;
 
-/* use array for ease of value access */
+/* NOTE: use array for speed of value access */
 let initialBoard = Array.make_matrix(30, 80, 0);
 
 let seed = board =>

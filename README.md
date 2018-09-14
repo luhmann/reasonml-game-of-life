@@ -1,18 +1,18 @@
-# Basic Reason Template
+# 🎮 ReasonML Game of Life
 
-Hello! This project allows you to quickly get started with Reason and BuckleScript. If you wanted a more sophisticated version, try the `react` template (`bsb -theme react -init .`).
+An implementation of [John Horton Conway's "Game of Life"](http://web.stanford.edu/~cdebs/GameOfLife/) in ReasonML running right here in your CLI.
 
-# Build
-```
-npm run build
-```
+![Demo](./demo.gif)
 
-# Build + Watch
+## Setup
 
-```
-npm run start
+```sh
+$ yarn
 ```
 
+## Run
 
-# Editor
-If you use `vscode`, Press `Windows + Shift + B` it will build automatically
+```sh
+$ yarn build
+$ node src/GoL.bs.js
+```
